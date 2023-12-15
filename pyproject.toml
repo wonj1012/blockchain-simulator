@@ -6,7 +6,9 @@ authors = ["Wonjae Choi <choi@wonj.me>"]
 license = "MIT"
 readme = "README.md"
 packages = [
+    { include = "blockchain", from = "src"},
     { include = "core", from = "src" },
+    { include = "contracts", from = "src" },
 ]
 
 [tool.poetry.dependencies]
