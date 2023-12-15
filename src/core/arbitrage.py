@@ -41,6 +41,3 @@ class Auction:
     participants: list[BlockProducer]
     bids: dict[BlockProducer, float]
     winning_bid: float
-
-
-
