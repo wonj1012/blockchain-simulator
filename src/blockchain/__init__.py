@@ -1,1 +1,1 @@
-from blockchain.blockchain import Blockchain, Block, Transaction
+from blockchain.blockchain import Block, Blockchain, Transaction
