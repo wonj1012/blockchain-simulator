@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
+from blockchain import Transaction
+from contracts import LiquidityPool
 from core.arbitrage import ArbitrageOpportunity
-from core.liquidity_pool import LiquidityPool
-from core.transaction import Transaction
 from core.user import BlockProducer
 
 
