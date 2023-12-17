@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "diamond-simulator"
+name = "blockchain-simulator"
 version = "0.1.0"
 description = "Simulator for the diamond protocol"
 authors = ["Wonjae Choi <choi@wonj.me>"]

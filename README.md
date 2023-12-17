@@ -1,4 +1,4 @@
-# Diamond Protocol Simulator
+# Blockchain Simulator
 
 ## Introduction
 
