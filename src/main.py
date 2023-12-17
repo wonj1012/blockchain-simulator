@@ -1,54 +1,52 @@
 from pprint import pprint
 
-from blockchain import Blockchain, Transaction
-from contracts import LiquidityPool
-from market.token import Token
+from core import Transaction
+from simulation import create_env_from_yaml
 
 
 def main():
-    blockchain = Blockchain()
+    blockchain = create_env_from_yaml("data/blockchain_config.yaml")
 
-    user1 = blockchain.create_user()
-    user2 = blockchain.create_user()
+    users = list(blockchain.users.values())
+    user1, user2 = list(users)[0], list(users)[1]
 
-    token_usdc = Token("USDC", 0, 0)
-    token_eth = Token("ETH", 0, 0)
-    blockchain.create_token(token_usdc)
-    blockchain.create_token(token_eth)
+    token_usdc = blockchain.tokens["USDC"]
+    token_eth = blockchain.tokens["ETH"]
 
-    user1.add_to_wallet(token_usdc, 1000)
-    user1.add_to_wallet(token_eth, 1000)
-    user2.add_to_wallet(token_usdc, 1000)
-    user2.add_to_wallet(token_eth, 1000)
+    uniswap_v2 = blockchain.contracts["UniswapV2"]
 
-    usdc_eth_pool_contract = LiquidityPool(
-        token_1=token_usdc, token_2=token_eth, fee=0.003
-    )
-    blockchain.create_contract(usdc_eth_pool_contract)
-
-    transactions = []
-
-    transactions.append(
+    user1.send_transaction(
         Transaction(
             sender=user1,
-            contract=usdc_eth_pool_contract,
+            contract=uniswap_v2,
             function="add_liquidity",
-            args={"amount_1": 100, "amount_2": 100},
-        )
+            args={
+                "token_1": token_usdc,
+                "amount_1": 100,
+                "token_2": token_eth,
+                "amount_2": 100,
+            },
+        ),
+        blockchain,
     )
-    transactions.append(
+
+    user2.send_transaction(
         Transaction(
             sender=user2,
-            contract=usdc_eth_pool_contract,
+            contract=uniswap_v2,
             function="add_liquidity",
-            args={"amount_1": 10, "amount_2": 10},
-        )
+            args={
+                "token_1": token_usdc,
+                "amount_1": 10,
+                "token_2": token_eth,
+                "amount_2": 10,
+            },
+        ),
+        blockchain,
     )
 
-    blockchain.create_block(transactions=transactions)
+    blockchain.create_block()
     pprint(blockchain)
-
-    print(str(usdc_eth_pool_contract))
 
 
 if __name__ == "__main__":

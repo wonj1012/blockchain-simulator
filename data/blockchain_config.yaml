@@ -1,0 +1,28 @@
+tokens:
+  - name: "USDC"
+    value: 1
+  - name: "ETH"
+    value: 3000
+
+users:
+  - name: "Wonjae Choi"
+    tokens:
+      - name: "USDC"
+        amount: 50000
+      - name: "ETH"
+        amount: 1000
+  - name: "Sangwon Moon"
+    tokens:
+      - name: "USDC"
+        amount: 1000
+      - name: "ETH"
+        amount: 500
+
+contracts:
+  - name: "UniswapV2"
+    pools:
+      - name: "USDC"
+        amount: 3000000
+      - name: "ETH"
+        amount: 1000
+      - fee: 0.003
