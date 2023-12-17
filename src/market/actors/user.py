@@ -15,9 +15,16 @@ class User:
         transaction_history (list[Transaction]): The transaction history of the user.
     """
 
+    name: str
+    address: str = field(default_factory=lambda: str(uuid.uuid4()))
     wallet: dict[Token, float] = field(default_factory=dict)
     transaction_history: list["Transaction"] = field(default_factory=list)  # type: ignore
-    address: str = field(default_factory=lambda: str(uuid.uuid4()))
+
+    def send_transaction(
+        self, transaction: "Transaction", blockchain: "Blockchain"  # type: ignore
+    ) -> None:
+        blockchain.add_transaction(transaction)
+        self.transaction_history.append(transaction)
 
     def add_to_wallet(self, token: Token, amount: float) -> None:
         """
