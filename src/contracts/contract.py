@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Callable
 
-from core.user import User
+from market.actors.user import User
 
 
 class Contract(ABC):

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 from contracts import Contract
-from core import Token
-from core.user import User
+from market.actors.user import User
+from market.token import Token
 
 
 @dataclass

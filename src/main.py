@@ -2,7 +2,7 @@ from pprint import pprint
 
 from blockchain import Blockchain, Transaction
 from contracts import LiquidityPool
-from core import Token
+from market.token import Token
 
 
 def main():

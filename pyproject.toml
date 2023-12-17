@@ -7,8 +7,10 @@ license = "MIT"
 readme = "README.md"
 packages = [
     { include = "blockchain", from = "src"},
-    { include = "core", from = "src" },
     { include = "contracts", from = "src" },
+    { include = "core", from = "src" },
+    { include = "market", from = "src" },
+    { include = "simulation", from = "src" },
 ]
 
 [tool.poetry.dependencies]

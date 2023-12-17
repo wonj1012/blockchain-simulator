@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from blockchain import Transaction
 from contracts import LiquidityPool
-from core.user import BlockProducer
+from market.actor import BlockProducer
 
 
 @dataclass

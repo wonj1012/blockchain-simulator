@@ -1,7 +1,7 @@
 import uuid
 from dataclasses import dataclass, field
 
-from core import Token
+from market.token import Token
 
 
 @dataclass

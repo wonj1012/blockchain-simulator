@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 
 from contracts import Contract
-from core import Token
-from core.user import User
+from market.actors.user import User
+from market.token import Token
 
 
 @dataclass
