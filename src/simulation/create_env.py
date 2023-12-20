@@ -2,7 +2,6 @@ import yaml
 
 from contracts.uniswap_v2 import UniswapV2
 from core.blockchain import Blockchain
-from market.token import Token
 
 
 def create_env_from_yaml(yaml_file: str) -> Blockchain:
@@ -15,7 +14,7 @@ def create_env_from_yaml(yaml_file: str) -> Blockchain:
 
     # Create tokens
     for token_info in data["tokens"]:
-        blockchain.create_token(Token(token_info["name"], token_info["value"], 0))
+        blockchain.create_token(name=token_info["name"], value=token_info["value"])
 
     # Create users
     for user_info in data["users"]:

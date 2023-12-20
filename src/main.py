@@ -1,52 +1,34 @@
-from pprint import pprint
-
-from core import Transaction
+from contracts.uniswap_v2 import UniswapV2
 from simulation import create_env_from_yaml
+from simulation.simulator import Epoch, Simulator
 
 
 def main():
     blockchain = create_env_from_yaml("data/blockchain_config.yaml")
 
-    users = list(blockchain.users.values())
-    user1, user2 = list(users)[0], list(users)[1]
+    simulator = Simulator(blockchain)
+    simulator.create_users(100)
+    simulator.create_liquidity_providers(10)
+    simulator.create_block_producers(1)
 
-    token_usdc = blockchain.tokens["USDC"]
-    token_eth = blockchain.tokens["ETH"]
-
-    uniswap_v2 = blockchain.contracts["UniswapV2"]
-
-    user1.send_transaction(
-        Transaction(
-            sender=user1,
-            contract=uniswap_v2,
-            function="add_liquidity",
-            args={
-                "token_1": token_usdc,
-                "amount_1": 100,
-                "token_2": token_eth,
-                "amount_2": 100,
+    epochs = [
+        Epoch(
+            num_blocks=1000,
+            oracle={
+                blockchain.tokens["USDC"]: 1.0,
+                blockchain.tokens["ETH"]: 3000.0,
             },
         ),
-        blockchain,
-    )
-
-    user2.send_transaction(
-        Transaction(
-            sender=user2,
-            contract=uniswap_v2,
-            function="add_liquidity",
-            args={
-                "token_1": token_usdc,
-                "amount_1": 10,
-                "token_2": token_eth,
-                "amount_2": 10,
+        Epoch(
+            num_blocks=100,
+            oracle={
+                blockchain.tokens["USDC"]: 1.0,
+                blockchain.tokens["ETH"]: 4000.0,
             },
         ),
-        blockchain,
-    )
+    ]
 
-    blockchain.create_block()
-    pprint(blockchain)
+    simulator.run(epochs=epochs, verbose=True)
 
 
 if __name__ == "__main__":

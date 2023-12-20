@@ -1,9 +1,8 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
 from contracts.contract import Contract
 from core.transaction import Transaction
-from market.actors.user import User
+from market.actors.user import BlockProducer, User
 from market.token import Token
 
 
@@ -15,6 +14,7 @@ class Block:
 
 @dataclass
 class Blockchain:
+    name: str = "Blockchain"
     blocks: list[Block] = field(default_factory=list)
     mempool: list[Transaction] = field(default_factory=list)
     users: dict[str, User] = field(default_factory=dict)
@@ -25,19 +25,16 @@ class Blockchain:
     def block_number(self):
         return len(self.blocks)
 
-    def process_transaction(self, transaction: Transaction):
-        transaction.process()
-
     def add_transaction(self, transaction: Transaction):
         self.mempool.append(transaction)
 
-    def create_block(self, transactions: Optional[list[Transaction]] = None):
-        if transactions is None:
-            transactions = self.mempool
-            self.mempool = []
+    def create_block(self):
+        transactions = self.mempool
 
         for transaction in transactions:
-            self.process_transaction(transaction)
+            transaction.process()
+
+        self.mempool = []
 
         self.blocks.append(Block(self.block_number, transactions))
 
@@ -47,18 +44,20 @@ class Blockchain:
 
         return user
 
-    def create_token(self, token: Token) -> Token:
+    def create_block_producer(self, name: str = "") -> BlockProducer:
+        block_producer = BlockProducer(name)
+        self.users[block_producer.address] = block_producer
+
+        return block_producer
+
+    def create_token(self, name: str, value: float) -> Token:
+        token = Token(name, value)
         self.tokens[token.name] = token
 
         return token
 
     def create_contract(self, contract: Contract) -> Contract:
         self.contracts[contract.name] = contract
+        contract.connect_blockchain(self)
 
         return contract
-
-
-if __name__ == "__main__":
-    blockchain = Blockchain()
-    blockchain.create_user()
-    print(blockchain.users)

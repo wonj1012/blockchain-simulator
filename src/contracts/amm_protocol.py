@@ -35,6 +35,26 @@ class LiquidityPool:
         self.token_reserve[token_1] = reserve_1
         self.token_reserve[token_2] = reserve_2
         self.fee = fee
+        self.lp_token: Token | None = None
+
+    @property
+    def pair_name(self) -> str:
+        """
+        Returns the name of the liquidity pool.
+        """
+        token_1, token_2 = list(self.token_reserve.keys())
+        return f"{token_1.name}/{token_2.name}"
+
+    @property
+    def total_value_locked(self) -> float:
+        """
+        Returns the total value locked in the liquidity pool.
+        """
+        tvl = 0
+        for token, reserve in self.token_reserve.items():
+            tvl += reserve * token.value
+
+        return tvl
 
     def add_liquidity(self, token: Token, amount: float) -> None:
         """
@@ -55,7 +75,7 @@ class LiquidityPool:
             amount_2 (float): The amount of the second token to remove.
         """
         if self.token_reserve[token] < amount:
-            raise ValueError("Insufficient funds")
+            raise ValueError(f"{self} Insufficient funds")
 
         self.token_reserve[token] -= amount
 
@@ -106,6 +126,9 @@ class AmmProtocol(Contract):
             raise ValueError("Liquidity pool already exists")
 
         new_pool = LiquidityPool(token_1, token_2, fee, reserve_1, reserve_2)
+        # new_pool.lp_token = self.blockchain.create_token(
+        #     name=f"{self.name} {token_1.name}/{token_2.name}", value=0.0
+        # )
 
         self.pools[(token_1, token_2)] = new_pool
 
@@ -164,7 +187,7 @@ class AmmProtocol(Contract):
         elif (token_2, token_1) in self.pools:
             pool = self.pools[(token_2, token_1)]
         else:
-            raise ValueError("Liquidity pool does not exist")
+            raise ValueError(f"Liquidity pool ({token_1}/{token_2}) does not exist")
 
         return pool
 
@@ -175,7 +198,12 @@ class AmmProtocol(Contract):
         reserve_out = pool.token_reserve[token_out]
 
         amount_in_with_fee = amount_in * (1 - pool.fee)
-        amount_out = (
-            amount_in_with_fee * reserve_out / (reserve_in + amount_in_with_fee)
-        )
+
+        new_reserve_in = reserve_in + amount_in_with_fee
+
+        amount_out = reserve_out - (reserve_in * reserve_out / new_reserve_in)
+
         return amount_out
+
+    def get_pools(self) -> list[LiquidityPool]:
+        return list(self.pools.values())

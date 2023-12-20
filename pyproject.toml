@@ -10,11 +10,13 @@ packages = [
     { include = "core", from = "src" },
     { include = "market", from = "src" },
     { include = "simulation", from = "src" },
+    { include = "utils", from = "src" },
 ]
 
 [tool.poetry.dependencies]
 python = "^3.12"
 pyyaml = "^6.0.1"
+loguru = "^0.7.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.12.0"

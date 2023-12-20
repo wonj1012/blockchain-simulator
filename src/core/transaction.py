@@ -24,10 +24,13 @@ class Transaction:
     args: dict[str, Any]
     gas_fee: Optional[float] = None
 
-    def process(self) -> Any:
+    def process(self) -> None:
         """
         Processes the transaction.
         """
-        return self.contract.process(
-            function=self.function, sender=self.sender, **self.args
-        )
+        try:
+            self.contract.process(
+                function=self.function, sender=self.sender, **self.args
+            )
+        except Exception as e:
+            print(f"{self} {e}")
